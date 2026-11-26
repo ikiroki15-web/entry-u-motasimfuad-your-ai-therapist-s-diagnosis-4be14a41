@@ -6,9 +6,9 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 // The diagnosis itself: one line, deadpan, with the turn at the end —
-// the AI therapist quietly admitting it shares the patient's habit.
+// the therapist admits it shares the patient's habit, then bills for it.
 const DIAGNOSIS =
-  "Diagnosis: prompt-dependency disorder — you ask an AI how you feel before asking yourself, and frankly, so would I.";
+  "Diagnosis: prompt-dependency disorder — you ask an AI how you feel before asking yourself, and frankly, so do I. That's why this session costs extra.";
 
 const MAX_CHARS = 200;
 const PRIMARY_DIR = "/output";
@@ -28,6 +28,11 @@ function checkedLine(): string {
   }
   if (line.includes("\n") || line.includes("\r")) {
     throw new Error("Diagnosis must be a single line.");
+  }
+  for (const ch of line) {
+    if (ch.codePointAt(0)! < 0x20) {
+      throw new Error("Diagnosis must not contain control characters.");
+    }
   }
   return line;
 }
